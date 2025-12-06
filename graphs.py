@@ -2,6 +2,16 @@ import matplotlib.pyplot as plt
 from collections import Counter
 import numpy as np
 
+def plot_with_line(x, y, title):
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    # Plot data
+    ax.plot(x, y, label=title, color='blue', linewidth=2)
+    plt.savefig(f"{title.replace(' ', '_')}_line.png", dpi=300, bbox_inches='tight')
+    plt.tight_layout()
+    plt.show()
+
+
 def plot_value_occurrences(values, graph_title, num_buckets=None):
     """
     Plots a bar chart showing the number of occurrences of each unique value.
@@ -74,19 +84,45 @@ def plot_value_occurrences(values, graph_title, num_buckets=None):
     plt.savefig(f"{graph_title.replace(' ', '_')}.png", dpi=300, bbox_inches='tight')
     plt.show()
 
+def generate_graph(data_2d, graph_name):
+    """
+    Generate a graph from a 2D array with only matplotlib.
+    
+    Args:
+        data_2d: 2D array/list of numerical values
+        graph_name: Name/title for the graph
+    """
+    
+    # Convert to numpy array if it's not already
+    data = np.array(data_2d)
+    
+    # Validate it's a 2D array
+    if len(data.shape) != 2:
+        raise ValueError("Input must be a 2D array")
+    
+    rows, cols = data.shape
+    
+    # Create figure and axis
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    # Plot each row as a line
+    for i in range(rows):
+        ax.plot(range(cols), data[i, :], marker='o', label=f'Row {i+1}')
+    
+    # Set labels and title
+    ax.set_xlabel('Column Index')
+    ax.set_ylabel('Value')
+    ax.set_title(graph_name)
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    
+    # Adjust layout and show
+    plt.savefig(f"{graph_name.replace(' ', '_')}_line.png", dpi=300, bbox_inches='tight')
+    plt.tight_layout()
+    plt.show()
+
 # Example usage
 if __name__ == "__main__":
-    # Example 1: Categorical data (no buckets)
-    categories = ['A', 'B', 'A', 'C', 'B', 'B', 'A', 'A', 'C', 'D']
-    plot_value_occurrences(categories, "Categorical Data Example")
-    
-    # Example 2: Numerical data without buckets
-    numbers = [1.2, 2.5, 3.1, 1.8, 2.9, 3.3, 1.1, 2.7, 3.0, 2.2, 1.5, 2.8]
-    plot_value_occurrences(numbers, "Numerical Data - No Buckets")
-    
-    # Example 3: Numerical data with 5 buckets
-    plot_value_occurrences(numbers, "Numerical Data", num_buckets=5)
-    
-    # Example 4: Larger dataset with buckets
-    larger_data = np.random.normal(100, 15, 1000)
-    plot_value_occurrences(larger_data, "Large Dataset", num_buckets=10)
+    x = np.linspace(0, 10, 100)
+    y = np.sin(x)
+    plot_with_line(x, y, 'sin(x)')
